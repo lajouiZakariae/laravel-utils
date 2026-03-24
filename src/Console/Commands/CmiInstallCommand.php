@@ -44,9 +44,9 @@ class CmiInstallCommand extends Command
             'app/Listeners/ProcessCmiPayment.php' => app_path('Listeners/ProcessCmiPayment.php'),
 
             // Value objects
-            'app/ValueObjects/CmiCallbackData.php' => app_path('ValueObjects/CmiCallbackData.php'),
+            'app/ValueObject/CmiCallbackData.php' => app_path('ValueObject/CmiCallbackData.php'),
 
-            'app/ValueObjects/CmiOrderData.php' => app_path('ValueObjects/CmiOrderData.php'),
+            'app/ValueObject/CmiOrderData.php' => app_path('ValueObject/CmiOrderData.php'),
 
             // Views
             'resources/views/cmi/layout.blade.php' => resource_path('views/cmi/layout.blade.php'),
@@ -143,7 +143,7 @@ class CmiInstallCommand extends Command
 
         $this->line('  <fg=yellow>3.</> Add routes to <fg=cyan>routes/api.php</> / <fg=cyan>routes/web.php</>:');
         $this->line('     // api.php');
-        $this->line("     Route::get('/reservations/{id}/pay', [CmiController::class, 'payReservation'])->middleware('auth:sanctum');");
+        $this->line("     Route::get('/cmi/pay', [CmiController::class, 'pay'])->middleware('auth:sanctum');");
         $this->line("     Route::post('/cmi/callback', [CmiController::class, 'handleCallback']);");
         $this->line('     // web.php');
         $this->line("     Route::get('/cmi/ok',   [CmiController::class, 'handleOk']);");
