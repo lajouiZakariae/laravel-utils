@@ -21,13 +21,16 @@ class CmiInstallCommand extends Command
     {
         return [
             // Enum
-            'app/CardBrandEnum.php' => app_path('CardBrandEnum.php'),
+            'app/Enums/CardBrandEnum.php' => app_path('Enums/CardBrandEnum.php'),
 
             // Service
             'app/Services/CmiService.php' => app_path('Services/CmiService.php'),
 
             // Controller
             'app/Http/Controllers/API/CmiController.php' => app_path('Http/Controllers/API/CmiController.php'),
+
+            // Config
+            'config/cmi.php' => config_path('cmi.php'),
 
             // Event
             'app/Events/CmiCallbackReceived.php' => app_path('Events/CmiCallbackReceived.php'),
@@ -36,14 +39,9 @@ class CmiInstallCommand extends Command
             'app/Listeners/ProcessCmiPayment.php' => app_path('Listeners/ProcessCmiPayment.php'),
 
             // Value objects
-            'app/ValueObject/CmiCallbackData.php' => app_path('ValueObject/CmiCallbackData.php'),
-            'app/ValueObject/CmiOrderData.php' => app_path('ValueObject/CmiOrderData.php'),
+            'app/ValueObjects/CmiCallbackData.php' => app_path('ValueObjects/CmiCallbackData.php'),
 
-            // Model (merge-sensitive — user is warned if it already exists)
-            'app/Models/Payment.php' => app_path('Models/Payment.php'),
-
-            // Migration
-            'database/migrations/add_cmi_fields_to_payments_table.php' => database_path('migrations/'.date('Y_m_d_His').'_add_cmi_fields_to_payments_table.php'),
+            'app/ValueObjects/CmiOrderData.php' => app_path('ValueObjects/CmiOrderData.php'),
 
             // Views
             'resources/views/cmi/layout.blade.php' => resource_path('views/cmi/layout.blade.php'),
@@ -52,14 +50,9 @@ class CmiInstallCommand extends Command
         ];
     }
 
-    /** Files where overwriting is risky — the user gets an extra merge warning. */
-    private const MERGE_SENSITIVE = [
-        'app/Models/Payment.php',
-    ];
-
     public function handle(Filesystem $filesystem): int
     {
-        $stubsBase = __DIR__.'/../../stubs';
+        $stubsBase = __DIR__.'/../../../stubs';
         $force = (bool) $this->option('force');
         $copied = 0;
         $skipped = 0;
@@ -77,11 +70,8 @@ class CmiInstallCommand extends Command
             }
 
             if ($filesystem->exists($destination) && ! $force) {
-                if (in_array($stub, self::MERGE_SENSITIVE, true)) {
-                    $this->components->warn("[SKIP] {$destination} already exists. Review manually and merge CMI fields — run with --force to overwrite.");
-                } else {
-                    $this->components->warn("[SKIP] {$destination} already exists. Use --force to overwrite.");
-                }
+                $this->components->warn("[SKIP] {$destination} already exists. Use --force to overwrite.");
+
                 $skipped++;
 
                 continue;
@@ -97,6 +87,8 @@ class CmiInstallCommand extends Command
             $copied++;
         }
 
+        $this->call('vendor:publish', ['--tag' => 'cmi-migrations']);
+
         $this->newLine();
         $this->components->info("Done. {$copied} file(s) copied, {$skipped} skipped.");
 
@@ -111,21 +103,6 @@ class CmiInstallCommand extends Command
     {
         $this->newLine();
         $this->components->info('Next steps:');
-
-        $this->line('  <fg=yellow>1.</> Add the CMI section to <fg=cyan>config/services.php</>:');
-        $this->line('');
-        $this->line("     'cmi' => [");
-        $this->line("         'store_key'    => env('CMI_STORE_KEY'),");
-        $this->line("         'client_id'    => env('CMI_CLIENT_ID'),");
-        $this->line("         'gateway_url'  => env('CMI_GATEWAY_URL'),");
-        $this->line("         'ok_url'       => env('CMI_OK_URL'),");
-        $this->line("         'fail_url'     => env('CMI_FAIL_URL'),");
-        $this->line("         'callback_url' => env('CMI_CALLBACK_URL'),");
-        $this->line("         'shop_url'     => env('CMI_SHOP_URL'),");
-        $this->line("         'currency'     => 504,");
-        $this->line("         'lang'         => env('CMI_LANG', 'fr'),");
-        $this->line('     ],');
-        $this->newLine();
 
         $this->line('  <fg=yellow>2.</> Add the required <fg=cyan>.env</> variables:');
         $this->line('     CMI_CLIENT_ID, CMI_STORE_KEY, CMI_GATEWAY_URL,');

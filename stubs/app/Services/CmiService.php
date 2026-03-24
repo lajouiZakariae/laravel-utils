@@ -38,18 +38,18 @@ class CmiService
     private function buildPaymentParams(CmiOrderData $orderData): Collection
     {
         $params = new Collection([
-            'clientid' => $this->repository->get('services.cmi.client_id'),
+            'clientid' => $this->repository->get('cmi.client_id'),
             'amount' => number_format($orderData->amount, 2, '.', ''),
             'oid' => $orderData->orderId,
-            'okUrl' => $this->repository->get('services.cmi.ok_url'),
-            'failUrl' => $this->repository->get('services.cmi.fail_url'),
-            'callbackUrl' => $this->repository->get('services.cmi.callback_url'),
+            'okUrl' => $this->repository->get('cmi.ok_url'),
+            'failUrl' => $this->repository->get('cmi.fail_url'),
+            'callbackUrl' => $this->repository->get('cmi.callback_url'),
             'CallbackResponse' => 'true',        // required for host-to-host callback
-            'shopurl' => $this->repository->get('services.cmi.shop_url'),
+            'shopurl' => $this->repository->get('cmi.shop_url'),
             'TranType' => 'PreAuth',
-            'currency' => $this->repository->get('services.cmi.currency'),
+            'currency' => $this->repository->get('cmi.currency'),
             'rnd' => microtime(),   // random nonce used in hash
-            'lang' => $this->repository->get('services.cmi.lang'),
+            'lang' => $this->repository->get('cmi.lang'),
             'storetype' => '3D_PAY_HOSTING',
             'hashAlgorithm' => 'ver3',
             'refreshtime' => '5',
@@ -80,7 +80,7 @@ class CmiService
      */
     private function renderAutoSubmitForm(Collection $params): Response
     {
-        $gatewayUrlFromConfig = $this->repository->get('services.cmi.gateway_url');
+        $gatewayUrlFromConfig = $this->repository->get('cmi.gateway_url');
 
         $safeGatewayUrl = htmlspecialchars((string) $gatewayUrlFromConfig, ENT_QUOTES, 'UTF-8');
 
@@ -173,7 +173,7 @@ class CmiService
             $hashval .= $this->escapeForHash($this->applyDocumentRule($value)).'|';
         }
 
-        $hashval .= $this->escapeForHash($this->repository->get('services.cmi.store_key'));
+        $hashval .= $this->escapeForHash($this->repository->get('cmi.store_key'));
 
         return base64_encode(pack('H*', hash('sha512', $hashval)));
     }
@@ -205,7 +205,7 @@ class CmiService
             $hashval .= $this->escapeForHash($this->applyDocumentRule($value)).'|';
         }
 
-        $hashval .= $this->escapeForHash($this->repository->get('services.cmi.store_key'));
+        $hashval .= $this->escapeForHash($this->repository->get('cmi.store_key'));
 
         return base64_encode(pack('H*', hash('sha512', $hashval)));
     }
@@ -231,7 +231,7 @@ class CmiService
             $hashval .= $this->escapeForHash($this->applyDocumentRule($value)).'|';
         }
 
-        $hashval .= $this->escapeForHash($this->repository->get('services.cmi.store_key'));
+        $hashval .= $this->escapeForHash($this->repository->get('cmi.store_key'));
 
         return base64_encode(pack('H*', hash('sha512', $hashval)));
     }
