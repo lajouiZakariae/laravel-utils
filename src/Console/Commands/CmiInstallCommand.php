@@ -137,11 +137,11 @@ class CmiInstallCommand extends Command
         $this->line('  <fg=yellow>1.</> Copy the CMI-related environment variables from <fg=cyan>.env.example</> to your <fg=cyan>.env</> file and fill in the appropriate values.');
         $this->newLine();
 
-        $this->line('  <fg=yellow>3.</> Register the event listener in <fg=cyan>app/Providers/AppServiceProvider.php</>:');
+        $this->line('  <fg=yellow>2.</> Register the event listener in <fg=cyan>app/Providers/AppServiceProvider.php</>:');
         $this->line('     Event::listen(CmiCallbackReceived::class, ProcessCmiPayment::class);');
         $this->newLine();
 
-        $this->line('  <fg=yellow>4.</> Add routes to <fg=cyan>routes/api.php</> / <fg=cyan>routes/web.php</>:');
+        $this->line('  <fg=yellow>3.</> Add routes to <fg=cyan>routes/api.php</> / <fg=cyan>routes/web.php</>:');
         $this->line('     // api.php');
         $this->line("     Route::get('/reservations/{id}/pay', [CmiController::class, 'payReservation'])->middleware('auth:sanctum');");
         $this->line("     Route::post('/cmi/callback', [CmiController::class, 'handleCallback']);");
@@ -150,7 +150,7 @@ class CmiInstallCommand extends Command
         $this->line("     Route::get('/cmi/fail', [CmiController::class, 'handleFail']);");
         $this->newLine();
 
-        $this->line('  <fg=yellow>5.</> Run the migration:');
+        $this->line('  <fg=yellow>4.</> Run the migration:');
         $this->line('     php artisan migrate');
         $this->newLine();
     }
