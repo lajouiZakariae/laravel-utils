@@ -112,7 +112,7 @@ class CmiInstallCommand extends Command
         $variables = [
             'CMI_CLIENT_ID=',
             'CMI_STORE_KEY=',
-            'CMI_GATEWAY_URL=',
+            'CMI_GATEWAY_URL=https://test-lanacash.cmi.co.ma/fim/est3dgate',
             'CMI_OK_URL=',
             'CMI_FAIL_URL=',
             'CMI_CALLBACK_URL=',
