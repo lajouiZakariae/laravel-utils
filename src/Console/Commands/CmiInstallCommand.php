@@ -12,6 +12,11 @@ class CmiInstallCommand extends Command
 
     protected $description = 'Install the CMI payment integration files into your Laravel application.';
 
+    public function __construct(private Filesystem $filesystem)
+    {
+        parent::__construct();
+    }
+
     /**
      * Map of stub path (relative to the stubs/ directory) => destination resolver.
      *
@@ -50,7 +55,7 @@ class CmiInstallCommand extends Command
         ];
     }
 
-    public function handle(Filesystem $filesystem): int
+    public function handle(): int
     {
         $stubsBase = __DIR__.'/../../../stubs';
         $force = (bool) $this->option('force');
@@ -62,14 +67,14 @@ class CmiInstallCommand extends Command
         foreach ($this->fileMap() as $stub => $destination) {
             $stubPath = $stubsBase.'/'.$stub;
 
-            if (! $filesystem->exists($stubPath)) {
+            if (! $this->filesystem->exists($stubPath)) {
                 $this->components->warn("Stub not found, skipping: {$stub}");
                 $skipped++;
 
                 continue;
             }
 
-            if ($filesystem->exists($destination) && ! $force) {
+            if ($this->filesystem->exists($destination) && ! $force) {
                 $this->components->warn("[SKIP] {$destination} already exists. Use --force to overwrite.");
 
                 $skipped++;
@@ -77,8 +82,8 @@ class CmiInstallCommand extends Command
                 continue;
             }
 
-            $filesystem->ensureDirectoryExists(dirname((string) $destination));
-            $filesystem->copy($stubPath, $destination);
+            $this->filesystem->ensureDirectoryExists(dirname((string) $destination));
+            $this->filesystem->copy($stubPath, $destination);
 
             $this->components->twoColumnDetail(
                 "<fg=green>Copied</>  {$stub}",
@@ -86,6 +91,8 @@ class CmiInstallCommand extends Command
             );
             $copied++;
         }
+
+        $this->appendEnvVariablesToEnvExample();
 
         $this->call('vendor:publish', ['--tag' => 'cmi-migrations']);
 
@@ -99,14 +106,35 @@ class CmiInstallCommand extends Command
         return self::SUCCESS;
     }
 
+    private function appendEnvVariablesToEnvExample(): void
+    {
+        $envExamplePath = base_path('.env.example');
+        $variables = [
+            'CMI_CLIENT_ID=',
+            'CMI_STORE_KEY=',
+            'CMI_GATEWAY_URL=',
+            'CMI_OK_URL=',
+            'CMI_FAIL_URL=',
+            'CMI_CALLBACK_URL=',
+            'CMI_SHOP_URL=',
+            'CMI_LANG=',
+        ];
+
+        $variablesContent = "\n# CMI Payment Integration\n".implode("\n", $variables)."\n";
+
+        if ($this->filesystem->exists($envExamplePath)) {
+            $this->filesystem->append($envExamplePath, $variablesContent);
+        } else {
+            $this->filesystem->put($envExamplePath, $variablesContent);
+        }
+    }
+
     private function printNextSteps(): void
     {
         $this->newLine();
         $this->components->info('Next steps:');
 
-        $this->line('  <fg=yellow>2.</> Add the required <fg=cyan>.env</> variables:');
-        $this->line('     CMI_CLIENT_ID, CMI_STORE_KEY, CMI_GATEWAY_URL,');
-        $this->line('     CMI_OK_URL, CMI_FAIL_URL, CMI_CALLBACK_URL, CMI_SHOP_URL, CMI_LANG');
+        $this->line('  <fg=yellow>1.</> Copy the CMI-related environment variables from <fg=cyan>.env.example</> to your <fg=cyan>.env</> file and fill in the appropriate values.');
         $this->newLine();
 
         $this->line('  <fg=yellow>3.</> Register the event listener in <fg=cyan>app/Providers/AppServiceProvider.php</>:');
