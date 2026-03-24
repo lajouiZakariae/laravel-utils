@@ -1,6 +1,6 @@
 {
-    "name": "lajouiZakariae/laravel-cmi",
-    "description": "CMI (Centre Monétique Interbancaire) 3D-Secure payment integration for Laravel.",
+    "name": "lajouizakariae/laravel-utils",
+    "description": "Laravel package to publish different types of utils to laravel projects.",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -16,13 +16,13 @@
     },
     "autoload": {
         "psr-4": {
-            "LaravelCmi\\": "src/"
+            "LaravelUtils\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "LaravelCmi\\CmiServiceProvider"
+                "LaravelUtils\\CmiServiceProvider"
             ]
         }
     },

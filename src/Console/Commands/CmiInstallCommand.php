@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelCmi\Console\Commands;
+namespace LaravelUtils\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;

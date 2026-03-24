@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelCmi;
+namespace LaravelUtils;
 
 use Illuminate\Support\ServiceProvider;
-use LaravelCmi\Console\Commands\CmiInstallCommand;
+use LaravelUtils\Console\Commands\CmiInstallCommand;
 
 class CmiServiceProvider extends ServiceProvider
 {
