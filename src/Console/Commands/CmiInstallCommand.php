@@ -32,7 +32,7 @@ class CmiInstallCommand extends Command
             'app/Services/CmiService.php' => app_path('Services/CmiService.php'),
 
             // Controller
-            'app/Http/Controllers/API/CmiController.php' => app_path('Http/Controllers/API/CmiController.php'),
+            'app/Http/Controllers/CmiController.php' => app_path('Http/Controllers/CmiController.php'),
 
             // Config
             'config/cmi.php' => config_path('cmi.php'),
