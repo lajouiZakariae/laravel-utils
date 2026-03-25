@@ -1,8 +1,6 @@
-# washroch/laravel-cmi
+# Laravel Utils
 
-CMI (Centre Monétique Interbancaire) 3D-Secure payment integration scaffold for Laravel.
-
-Provides a single Artisan command that copies all CMI integration files into your application.
+Provides a single Artisan command that copies all utils into your application.
 
 ---
 
@@ -13,12 +11,12 @@ Provides a single Artisan command that copies all CMI integration files into you
 Run:
 
 ```bash
-composer require washroch/laravel-cmi
+composer require lajouizakariae/laravel-utils
 ```
 
 The service provider is auto-discovered via `composer.json`'s `extra.laravel.providers`.
 
-### 2. Run the install command
+### 2. Run the install command for CMI integration
 
 ```bash
 php artisan utils:cmi-install
