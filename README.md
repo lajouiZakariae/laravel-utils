@@ -10,21 +10,7 @@ Provides a single Artisan command that copies all CMI integration files into you
 
 ### 1. Require the package
 
-If you are using it as a local path repository, add this to your application's `composer.json`:
-
-```json
-"repositories": [
-    {
-        "type": "path",
-        "url": "packages/washroch/laravel-cmi"
-    }
-],
-"require": {
-    "washroch/laravel-cmi": "*"
-}
-```
-
-Then run:
+Run:
 
 ```bash
 composer require washroch/laravel-cmi
