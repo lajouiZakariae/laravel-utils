@@ -48,51 +48,37 @@ php artisan utils:cmi-install --force
 
 ## What gets copied
 
-| Stub                                                       | Destination                                                            |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `app/CardBrandEnum.php`                                    | `app/CardBrandEnum.php`                                                |
-| `app/Services/CmiService.php`                              | `app/Services/CmiService.php`                                          |
-| `app/Http/Controllers/API/CmiController.php`               | `app/Http/Controllers/API/CmiController.php`                           |
-| `app/Events/CmiCallbackReceived.php`                       | `app/Events/CmiCallbackReceived.php`                                   |
-| `app/Listeners/ProcessCmiPayment.php`                      | `app/Listeners/ProcessCmiPayment.php`                                  |
-| `app/ValueObject/CmiCallbackData.php`                      | `app/ValueObject/CmiCallbackData.php`                                  |
-| `app/ValueObject/CmiOrderData.php`                         | `app/ValueObject/CmiOrderData.php`                                     |
-| `app/Models/Payment.php`                                   | `app/Models/Payment.php` ⚠️ merge-sensitive                            |
-| `database/migrations/add_cmi_fields_to_payments_table.php` | `database/migrations/{timestamp}_add_cmi_fields_to_payments_table.php` |
-| `resources/views/cmi/layout.blade.php`                     | `resources/views/cmi/layout.blade.php`                                 |
-| `resources/views/cmi/ok.blade.php`                         | `resources/views/cmi/ok.blade.php`                                     |
-| `resources/views/cmi/fail.blade.php`                       | `resources/views/cmi/fail.blade.php`                                   |
+| Stub                                     | Destination                              |
+| ---------------------------------------- | ---------------------------------------- |
+| `app/Enums/CardBrandEnum.php`            | `app/Enums/CardBrandEnum.php`            |
+| `app/Services/CmiService.php`            | `app/Services/CmiService.php`            |
+| `app/Http/Controllers/CmiController.php` | `app/Http/Controllers/CmiController.php` |
+| `config/cmi.php`                         | `config/cmi.php`                         |
+| `app/Events/CmiCallbackReceived.php`     | `app/Events/CmiCallbackReceived.php`     |
+| `app/Listeners/ProcessCmiPayment.php`    | `app/Listeners/ProcessCmiPayment.php`    |
+| `app/ValueObject/CmiCallbackData.php`    | `app/ValueObject/CmiCallbackData.php`    |
+| `app/ValueObject/CmiOrderData.php`       | `app/ValueObject/CmiOrderData.php`       |
+| `resources/views/cmi/layout.blade.php`   | `resources/views/cmi/layout.blade.php`   |
+| `resources/views/cmi/ok.blade.php`       | `resources/views/cmi/ok.blade.php`       |
+| `resources/views/cmi/fail.blade.php`     | `resources/views/cmi/fail.blade.php`     |
 
-> ⚠️ `Payment.php` may already exist in your project. If it does, the command will warn you and skip it (unless `--force` is used). Review the stub and merge the CMI fields manually.
+The command also:
+
+- Appends CMI environment variables to your `.env.example` automatically.
+- Publishes the CMI migration via `php artisan vendor:publish --tag=cmi-migrations`.
 
 ---
 
 ## Post-install steps
 
-The command prints these steps after a successful install:
+### 1. Fill in `.env` variables
 
-### 1. Add CMI config to `config/services.php`
-
-```php
-'cmi' => [
-    'store_key'    => env('CMI_STORE_KEY'),
-    'client_id'    => env('CMI_CLIENT_ID'),
-    'gateway_url'  => env('CMI_GATEWAY_URL'),
-    'ok_url'       => env('CMI_OK_URL'),
-    'fail_url'     => env('CMI_FAIL_URL'),
-    'callback_url' => env('CMI_CALLBACK_URL'),
-    'shop_url'     => env('CMI_SHOP_URL'),
-    'currency'     => 504,
-    'lang'         => env('CMI_LANG', 'fr'),
-],
-```
-
-### 2. Add `.env` variables
+The install command appends the following block to your `.env.example`. Copy them to your `.env` and fill in the values:
 
 ```dotenv
 CMI_CLIENT_ID=your_client_id
 CMI_STORE_KEY=your_store_key
-CMI_GATEWAY_URL=https://testpayment.cmi.co.ma/fim/est3Dgate
+CMI_GATEWAY_URL=https://test-lanacash.cmi.co.ma/fim/est3dgate
 CMI_OK_URL=https://your-domain.com/cmi/ok
 CMI_FAIL_URL=https://your-domain.com/cmi/fail
 CMI_CALLBACK_URL=https://your-domain.com/api/cmi/callback
@@ -100,7 +86,7 @@ CMI_SHOP_URL=https://your-domain.com
 CMI_LANG=fr
 ```
 
-### 3. Register the event listener in `AppServiceProvider`
+### 2. Register the event listener in `AppServiceProvider`
 
 ```php
 use App\Events\CmiCallbackReceived;
@@ -110,11 +96,11 @@ use Illuminate\Support\Facades\Event;
 Event::listen(CmiCallbackReceived::class, ProcessCmiPayment::class);
 ```
 
-### 4. Add routes
+### 3. Add routes
 
 ```php
 // routes/api.php
-Route::get('/reservations/{id}/pay', [CmiController::class, 'payReservation'])->middleware('auth:sanctum');
+Route::get('/cmi/pay', [CmiController::class, 'pay'])->middleware('auth:sanctum');
 Route::post('/cmi/callback', [CmiController::class, 'handleCallback']);
 
 // routes/web.php
@@ -122,7 +108,7 @@ Route::get('/cmi/ok',   [CmiController::class, 'handleOk']);
 Route::get('/cmi/fail', [CmiController::class, 'handleFail']);
 ```
 
-### 5. Run the migration
+### 4. Run the migration
 
 ```bash
 php artisan migrate
