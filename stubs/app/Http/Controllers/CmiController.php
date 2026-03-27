@@ -7,6 +7,7 @@ use App\Services\CmiService;
 use App\ValueObject\CmiCallbackData;
 use App\ValueObject\CmiOrderData;
 use Illuminate\Http\Request;
+use Illuminate\Log\LogManager;
 use Illuminate\Validation\UnauthorizedException;
 
 class CmiController
@@ -26,26 +27,26 @@ class CmiController
         return $cmiService->redirectToGateway(CmiOrderData::fromArray($data));
     }
 
-    public function handleCallback(Request $request, CmiService $cmiService)
+    public function handleCallback(Request $request, CmiService $cmiService, LogManager $logger)
     {
         $isValid = $cmiService->verifyCallbackHash($request->all());
 
         if (! $isValid) {
-            logger()->warning('CMI callback: invalid hash', $request->all());
+            $logger->warning('CMI callback: invalid hash', $request->all());
 
             throw new UnauthorizedException('Invalid callback hash');
         }
 
-        event(new CmiCallbackReceived(CmiCallbackData::fromRequest($request)));
+        CmiCallbackReceived::dispatch(CmiCallbackData::fromRequest($request));
 
         return response()->noContent(200);
     }
 
-    public function handleOk(Request $request)
+    public function handleOk(Request $request, LogManager $logger)
     {
         $data = $request->all();
 
-        logger()->info('Received CMI ok redirect', $data);
+        $logger->info('Received CMI ok redirect', $data);
 
         return view('cmi.ok', [
             'orderId' => $data['oid'] ?? null,
@@ -53,11 +54,11 @@ class CmiController
         ]);
     }
 
-    public function handleFail(Request $request)
+    public function handleFail(Request $request, LogManager $logger)
     {
         $data = $request->all();
 
-        logger()->info('Received CMI fail redirect', $data);
+        $logger->info('Received CMI fail redirect', $data);
 
         return view('cmi.fail', [
             'orderId' => $data['oid'] ?? null,
