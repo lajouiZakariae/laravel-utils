@@ -37,4 +37,21 @@ final class CmiCallbackData
             paymentType: $request->input('paymentType'),
         );
     }
+
+    public function toArray(): array
+    {
+        return [
+            'oid' => $this->oid,
+            'response' => $this->response,
+            'procReturnCode' => $this->procReturnCode,
+            'mdStatus' => $this->mdStatus,
+            'amount' => $this->amount,
+            'transId' => $this->transId,
+            'authCode' => $this->authCode,
+            'maskedPan' => $this->maskedPan,
+            'errorMessage' => $this->errorMessage,
+            'paymentType' => $this->paymentType,
+            'cardBrand' => $this->cardBrand?->value,
+        ];
+    }
 }
