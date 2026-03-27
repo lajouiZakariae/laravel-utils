@@ -1,6 +1,6 @@
 @extends('cmi.layout')
 
-@section('title', 'Paiement échoué — ' . config('app.name', 'WashRoc'))
+@section('title', 'Paiement échoué — ' . config('app.name', 'Laravel'))
 
 @section('content')
     {{-- Status banner --}}
