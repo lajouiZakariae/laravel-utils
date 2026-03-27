@@ -27,7 +27,7 @@ final class CmiCallbackData
             oid: (string) $request->input('oid', ''),
             response: $request->input('Response'),
             procReturnCode: $request->input('ProcReturnCode'),
-            mdStatus: (int) $request->input('mdStatus', 0),
+            mdStatus: $request->filled('mdStatus') ? (int) $request->input('mdStatus') : null,
             amount: $request->filled('amount') ? (float) $request->input('amount') : null,
             transId: $request->input('TransId'),
             authCode: $request->input('AuthCode'),
