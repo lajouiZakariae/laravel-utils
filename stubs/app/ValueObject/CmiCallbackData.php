@@ -2,7 +2,7 @@
 
 namespace App\ValueObject;
 
-use App\Enums\CardBrandEnum;
+use App\CardBrandEnum;
 use Illuminate\Http\Request;
 
 final class CmiCallbackData
