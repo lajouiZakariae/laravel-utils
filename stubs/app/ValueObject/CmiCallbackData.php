@@ -5,20 +5,20 @@ namespace App\ValueObject;
 use App\Enums\CardBrandEnum;
 use Illuminate\Http\Request;
 
-final readonly class CmiCallbackData
+final class CmiCallbackData
 {
     public function __construct(
-        public string $oid,
-        public ?string $response,
-        public ?string $procReturnCode,
-        public int $mdStatus,
-        public ?float $amount,
-        public ?string $transId,
-        public ?string $authCode,
-        public ?string $maskedPan,
-        public ?string $errorMessage,
-        public ?string $paymentType,
-        public ?CardBrandEnum $cardBrand,
+        public readonly string $oid,
+        public readonly ?string $response,
+        public readonly ?string $procReturnCode,
+        public readonly ?int $mdStatus,
+        public readonly ?float $amount,
+        public readonly ?string $transId,
+        public readonly ?string $authCode,
+        public readonly ?string $maskedPan,
+        public readonly ?string $errorMessage,
+        public readonly ?string $paymentType,
+        public readonly ?CardBrandEnum $cardBrand,
     ) {}
 
     public static function fromRequest(Request $request): self

@@ -2,20 +2,20 @@
 
 namespace App\ValueObject;
 
-final readonly class CmiOrderData
+final class CmiOrderData
 {
     public function __construct(
-        public string $orderId,
-        public float $amount,
-        public string $name,
-        public string $email,
-        public string $phone,
-        public string $address,
-        public string $city,
-        public string $state,
-        public string $postalCode,
-        public string $countryCode = '504',
-        public string $company = '',
+        public readonly string $orderId,
+        public readonly float $amount,
+        public readonly string $name,
+        public readonly string $email,
+        public readonly string $phone,
+        public readonly string $address,
+        public readonly string $city,
+        public readonly string $state,
+        public readonly string $postalCode,
+        public readonly string $countryCode = '504',
+        public readonly string $company = '',
     ) {}
 
     public static function fromArray(array $data): self
