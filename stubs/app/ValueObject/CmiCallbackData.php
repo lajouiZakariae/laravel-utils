@@ -32,8 +32,7 @@ final class CmiCallbackData
             transId: $request->input('TransId'),
             authCode: $request->input('AuthCode'),
             maskedPan: $request->input('MaskedPan'),
-            // EXTRA.CARDBRAND uses a literal dot — not accessible via dot-notation input()
-            cardBrand: CardBrandEnum::tryFrom((string) ($request->all()['EXTRA.CARDBRAND'] ?? '')),
+            cardBrand: CardBrandEnum::tryFrom($request->string('EXTRA_CARDBRAND', '')->toString()),
             errorMessage: $request->input('mdErrorMsg') ?: $request->input('ErrMsg'),
             paymentType: $request->input('paymentType'),
         );
