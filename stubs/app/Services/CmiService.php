@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\ValueObject\CmiCallbackData;
 use App\ValueObject\CmiOrderData;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Http\Response;
@@ -30,6 +31,16 @@ class CmiService
         $params = $this->buildPaymentParams($orderData);
 
         return $this->renderAutoSubmitForm($params);
+    }
+
+    public function isPaymentSuccessful(CmiCallbackData $data): bool
+    {
+        $procOk = $data->procReturnCode === '0' || $data->procReturnCode === '00';
+        $responseOk = $data->response === 'Approved';
+        // mdStatus is only present for 3D Secure transactions; null means non-3D
+        $mdOk = $data->mdStatus === null || in_array($data->mdStatus, [1, 2, 3, 4], true);
+
+        return $procOk && $responseOk && $mdOk;
     }
 
     /**
