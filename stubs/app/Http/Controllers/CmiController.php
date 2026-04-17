@@ -56,13 +56,33 @@ class CmiController
 
     public function handleFail(Request $request, LogManager $logger)
     {
-        $data = $request->all();
+        $logger->info('Received CMI fail redirect', $request->all());
 
-        $logger->info('Received CMI fail redirect', $data);
+        $orderId = $request->input('oid');
+        $amount = $request->input('amount');
+        $currency = $request->input('currencyAlphaCode', 'MAD');
+        $response = $request->input('Response');        // "Declined" or "Error"
+        $procCode = $request->input('ProcReturnCode');  // "99", "51", etc.
+        $errCode = $request->input('ErrCode');         // "CORE-5110", etc.
+        $errMsg = $request->input('ErrMsg');
+        $maskedPan = $request->input('MaskedPan');
+        $mdStatus = $request->input('mdStatus');
 
-        return view('cmi.fail', [
-            'orderId' => $data['oid'] ?? null,
-            'errorMessage' => $data['ErrMsg'] ?? ($data['errmsg'] ?? null),
-        ]);
+        // Build a user-friendly error message
+        $errorMessage = match (true) {
+            ! empty($errMsg) => $errMsg,
+            ! empty($errCode) => "Code d'erreur : {$errCode}",
+            ! empty($response) => $response,
+            default => 'Une erreur est survenue lors du paiement.',
+        };
+
+        return view('cmi.fail', compact(
+            'orderId',
+            'amount',
+            'currency',
+            'errorMessage',
+            'procCode',
+            'maskedPan',
+        ));
     }
 }
