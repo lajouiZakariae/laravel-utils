@@ -24,6 +24,7 @@
             Votre paiement n'a pas pu être traité. Veuillez réessayer ou contacter votre banque si le problème persiste.
         </p>
 
+        {{-- Order reference --}}
         @if($orderId)
             <div class="mt-2 w-full rounded-xl bg-muted px-5 py-4 text-left">
                 <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Référence de commande</p>
@@ -31,10 +32,37 @@
             </div>
         @endif
 
+        {{-- Amount --}}
+        @if($amount)
+            <div class="w-full rounded-xl bg-muted px-5 py-4 text-left">
+                <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Montant</p>
+                <p class="font-semibold text-foreground font-mono text-sm">
+                    {{ number_format((float) $amount, 2) }} {{ $currency }}
+                </p>
+            </div>
+        @endif
+
+        {{-- Masked card --}}
+        @if($maskedPan)
+            <div class="w-full rounded-xl bg-muted px-5 py-4 text-left">
+                <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Carte utilisée</p>
+                <p class="font-semibold text-foreground font-mono text-sm tracking-widest">{{ $maskedPan }}</p>
+            </div>
+        @endif
+
+        {{-- Error reason --}}
         @if($errorMessage)
             <div class="w-full rounded-xl bg-destructive/10 border border-destructive/20 px-5 py-4 text-left">
                 <p class="text-xs font-medium text-destructive uppercase tracking-wide mb-1">Raison</p>
                 <p class="text-sm text-foreground">{{ $errorMessage }}</p>
+            </div>
+        @endif
+
+        {{-- Error code (only show if present, useful for support) --}}
+        @if($procCode && $procCode !== '00')
+            <div class="w-full rounded-xl bg-muted px-5 py-4 text-left">
+                <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Code d'erreur</p>
+                <p class="font-semibold text-foreground font-mono text-sm">{{ $procCode }}</p>
             </div>
         @endif
     </div>
